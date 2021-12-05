@@ -21,36 +21,35 @@ import axios from 'axios';
 let App = () => {
   const API = 'https://www.ag-grid.com/example-assets/olympic-winners.json'
   const [arr, setArr] = useState([])
- 
-  
+
+
 
   useEffect(() => {
     axios.get(API)
-      .then(response => { setArr(response.data.slice(9, 19).map((el,index)=>({...el,boolButton:false,id:index}))) });
-     
+      .then(response => { 
+        setArr(response.data.slice(9, 19).map((el, index) => ({ ...el, boolButton: false, id: index }))) })
   }
     , [])
- 
 
-    let onButtonClick = (id) => {
-      const copyArr = [...arr];
-     
-     copyArr.forEach(e => {
-       if(e.id === id){
-         e.boolButton = !e.boolButton;
-         console.log(e.boolButton);
-       }
-     })
-    
+
+  let onButtonClick = (id) => {
+    const copyArr = [...arr];
+
+    copyArr.forEach(e => {
+      if (e.id === id) {
+        e.boolButton = !e.boolButton;
+        console.log(e.boolButton);
+      }
+    })
+
     setArr(copyArr);
-    }
+  }
 
   return (
     <div className="App">
-      
+
       {arr.map((u) => (
         <User
-          
           onButtonClick={onButtonClick}
           key={u.id}
           id={u.id}
@@ -67,17 +66,17 @@ let App = () => {
 
 }
 
-let User = ({ name, age, sport, country, medals,onButtonClick, boolButton, id}) => {
+let User = ({ name, age, sport, country, medals, onButtonClick, boolButton, id }) => {
   return (
     <div >
       <p>{name} ({id})
-        <button onClick={()=>{onButtonClick(id)}}>+</button>
-        {boolButton?<span>
+        <button onClick={() => { onButtonClick(id) }}>+</button>
+        {boolButton ? <span>
           <p>age:{age}</p>
           <p>sport:{sport}</p>
           <p>country:{country}</p>
           <p>medals:{medals}</p>
-        </span>:''}
+        </span> : ''}
       </p>
 
     </div>
