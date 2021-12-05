@@ -21,34 +21,45 @@ import axios from 'axios';
 let App = () => {
   const API = 'https://www.ag-grid.com/example-assets/olympic-winners.json'
   const [arr, setArr] = useState([])
-  const [buttonBool, setButtonBool] = useState(true)
+ 
   
 
   useEffect(() => {
     axios.get(API)
-      .then(response => { setArr(response.data) })
+      .then(response => { setArr(response.data.slice(9, 19).map((el,index)=>({...el,boolButton:false,id:index}))) });
+     
   }
     , [])
  
 
-    let onButtonClick = () => {
-     alert(buttonBool)
-      return setButtonBool(!buttonBool)
+    let onButtonClick = (id) => {
+      const copyArr = [...arr];
+     
+     copyArr.forEach(e => {
+       if(e.id === id){
+         e.boolButton = !e.boolButton;
+         console.log(e.boolButton);
+       }
+     })
+    
+    setArr(copyArr);
     }
 
   return (
     <div className="App">
       
-      {arr.slice(9, 19).map((u, index, arr) => (
+      {arr.map((u) => (
         <User
-          buttonBool={buttonBool}
+          
           onButtonClick={onButtonClick}
-          key={index}
+          key={u.id}
+          id={u.id}
           name={u.athlete}
           age={u.age}
           sport={u.sport}
           country={u.country}
           medals={u.total}
+          boolButton={u.boolButton}
         />
       ))}
     </div>
@@ -56,12 +67,12 @@ let App = () => {
 
 }
 
-let User = ({ name, age, sport, country, medals,onButtonClick, buttonBool}) => {
+let User = ({ name, age, sport, country, medals,onButtonClick, boolButton, id}) => {
   return (
     <div >
-      <p>{name}
-        <button onClick={onButtonClick}>+</button>
-        {buttonBool?<span>
+      <p>{name} ({id})
+        <button onClick={()=>{onButtonClick(id)}}>+</button>
+        {boolButton?<span>
           <p>age:{age}</p>
           <p>sport:{sport}</p>
           <p>country:{country}</p>
