@@ -86,7 +86,7 @@ let User = ({ name, age, sport, country, totals }) => {
           <p>age:{age}</p>
           <p>sport:{sport}</p>
           <p>country:{country}</p>
-          <p>totals:{totals}</p>
+          <p>medals:{totals}</p>
         </span> : ''}
       </p>
 
