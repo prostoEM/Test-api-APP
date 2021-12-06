@@ -12,70 +12,81 @@ import axios from 'axios';
 //      age: "33"
 //      sport: "swimming"
 //      country: "Germany"
-//      medals: "12"
+//      totals: "12"
 
 // 2. Из полученных данных с API вывести список всех стран с кол-вом медалей спортсменов, принадлежащих данной стране
 
 // Не запрещается использовать Google для уточнения работы некоторых методов, которые Вы собираетесь использовать.
 
 let App = () => {
+
+
   const API = 'https://www.ag-grid.com/example-assets/olympic-winners.json'
   const [arr, setArr] = useState([])
 
 
-
   useEffect(() => {
     axios.get(API)
-      .then(response => { 
-        setArr(response.data.slice(9, 19).map((el, index) => ({ ...el, boolButton: false, id: index }))) })
+      .then(response => {
+        setArr(response.data)
+      })
   }
     , [])
 
+  const sortListOfCountry = arr.reduce((acc, element) => {
+    let indexElement = acc.map((accEl) => accEl.country).indexOf(element.country);
+    indexElement !== -1 ?
+      (acc[indexElement].total += element.total) :
+      acc.push({ country: element.country, total: element.total });
+    return acc;
+  }, []);
 
-  let onButtonClick = (id) => {
-    const copyArr = [...arr];
 
-    copyArr.forEach(e => {
-      if (e.id === id) {
-        e.boolButton = !e.boolButton;
-        console.log(e.boolButton);
-      }
-    })
 
-    setArr(copyArr);
-  }
+
 
   return (
     <div className="App">
 
-      {arr.map((u) => (
+      {arr.slice(9, 19).map((u) => (
         <User
-          onButtonClick={onButtonClick}
-          key={u.id}
-          id={u.id}
+          key={u.athlete + u.age + u.sport + u.total}
           name={u.athlete}
           age={u.age}
           sport={u.sport}
           country={u.country}
-          medals={u.total}
-          boolButton={u.boolButton}
+          totals={u.total}
         />
       ))}
+
+      {sortListOfCountry.map(e => (
+        <City
+          key={e.country + e.total}
+          country={e.country}
+          total={e.total}
+        />
+      ))}
+
     </div>
   );
 
 }
 
-let User = ({ name, age, sport, country, medals, onButtonClick, boolButton, id }) => {
+let User = ({ name, age, sport, country, totals }) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const onButtonClick = () => {
+    setIsOpen(!isOpen);
+  }
   return (
     <div >
-      <p>{name} ({id})
-        <button onClick={() => { onButtonClick(id) }}>+</button>
-        {boolButton ? <span>
+      <p>
+        <button onClick={onButtonClick}>{isOpen ? '-' : '+'}</button>
+        {name}
+        {isOpen ? <span>
           <p>age:{age}</p>
           <p>sport:{sport}</p>
           <p>country:{country}</p>
-          <p>medals:{medals}</p>
+          <p>totals:{totals}</p>
         </span> : ''}
       </p>
 
@@ -84,4 +95,16 @@ let User = ({ name, age, sport, country, medals, onButtonClick, boolButton, id }
 }
 
 
+let City = ({ country, total }) => {
+  return (
+    <div>
+      <p>{country}:  {total}</p>
+    </div>
+  )
+}
+
+
 export default App;
+
+
+
